@@ -19,7 +19,7 @@
 
 package "apache2" do
   case node[:platform]
-  when "centos","redhat","fedora","suse"
+  when "centos","redhat","fedora","suse","amazon"
     package_name "httpd"
   when "debian","ubuntu"
     package_name "apache2"
@@ -29,7 +29,7 @@ end
 
 service "apache2" do
   case node[:platform]
-  when "centos","redhat","fedora","suse"
+  when "centos","redhat","fedora","suse","amazon"
     service_name "httpd"
     # If restarted/reloaded too quickly httpd has a habit of failing.
     # This may happen with multiple recipes notifying apache to restart - like
@@ -45,12 +45,13 @@ service "apache2" do
     "centos" => { "default" => [ :restart, :reload, :status ] },
     "redhat" => { "default" => [ :restart, :reload, :status ] },
     "fedora" => { "default" => [ :restart, :reload, :status ] },
+    "amazon" => { "default" => [ :restart, :reload, :status ] },
     "default" => { "default" => [:restart, :reload ] }
   )
   action :enable
 end
 
-if platform?("centos", "redhat", "fedora", "suse")
+if platform?("centos", "redhat", "fedora", "suse","amazon")
   directory node[:apache][:log_dir] do
     mode 0755
     action :create
@@ -76,7 +77,7 @@ if platform?("centos", "redhat", "fedora", "suse")
     if node[:kernel][:machine] == "x86_64" 
       libdir = "lib64"
     else 
-      libdir = "lib"
+     libdir = "lib"
     end
     command "/usr/local/bin/apache2_module_conf_generate.pl /usr/#{libdir}/httpd/modules /etc/httpd/mods-available"
     
@@ -181,7 +182,7 @@ include_recipe "apache2::mod_env"
 include_recipe "apache2::mod_mime"
 include_recipe "apache2::mod_negotiation"
 include_recipe "apache2::mod_setenvif"
-include_recipe "apache2::mod_log_config" if platform?("centos", "redhat", "suse")
+include_recipe "apache2::mod_log_config" if platform?("centos", "redhat", "suse","amazon")
 
 # uncomment to get working example site on centos/redhat/fedora
 #apache_site "default"
