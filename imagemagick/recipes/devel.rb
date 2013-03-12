@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: build-essential
+# Cookbook Name:: imagemagick
 # Recipe:: default
 #
-# Copyright 2008-2009, Opscode, Inc.
+# Copyright 2009, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,27 +17,16 @@
 # limitations under the License.
 #
 
-case node[:platform]
-when "ubuntu","debian"
-  %w{build-essential binutils-doc}.each do |pkg|
-    package pkg do
-      action :install
-    end
-  end
-when "centos"
-  package "gcc" do
-    action :install
-  end
-end
+include_recipe "imagemagick"
 
-package "autoconf" do
-  action :install
-end
+dev_pkg = value_for_platform(
+  ["redhat", "centos", "fedora"] => { "default" => "ImageMagick-devel" },
+  "debian" => { "default" => "libmagickwand-dev" },
+  "ubuntu" => {
+    "8.04" => "libmagick9-dev",
+    "8.10" => "libmagick9-dev",
+    "default" => "libmagickwand-dev"
+  }
+)
 
-package "flex" do
-  action :install
-end
-
-package "bison" do
-  action :install
-end
+package dev_pkg
