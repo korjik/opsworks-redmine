@@ -1,38 +1,30 @@
-#
-# Cookbook Name:: redmine
-# Attributes:: redmine
-#
-# Copyright 2011, Christian Trabold
-# Copyright 2009, Opscode, Inc
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+default['redmine'] = {
+  'release_tag' => "1.3.1",
+  'app_path' => "/opt/redmine/",
+  'unicorn_conf' => {
+    'pid' => "/tmp/pids/unicorn.pid", 
+    'sock' => "/tmp/sockets/unicorn.sock",
+    'error_log' => "unicorn.error.log",
+    'access_log' => "unicorn.access.log"
+    },
+  'db' => {
+    'type' => "mysql",
+    'db_name' => "redmine",
+    'db_host' => "10.253.134.51",
+    'db_user' => "root",
+    'db_pass' => "qwerty123"
+  },
+  'ruby' => "ruby-1.8.7-p330@redmine",
+  'rmagick' => "disabled",
+  'nginx_filenames' => ["redmine.conf"],
+  'nginx_listen' => ["#{node['ipaddress']}:80"]
+}
 
-require 'openssl'
-
-pw = String.new
-
-while pw.length < 20
-  pw << OpenSSL::Random.random_bytes(1).gsub(/\W/, '')
-end
-
-#database_server = search(:node, "database_master:true").map {|n| n['fqdn']}.first
-
-set[:redmine][:dir] = "/srv/redmine-#{redmine[:version]}"
-
-default[:redmine][:dl_id]   = "74944"
-default[:redmine][:version] = "1.2.0"
-
-default[:redmine][:db][:type]     = "mysql"
-default[:redmine][:db][:user]     = "root"
-default[:redmine][:db][:password] = "qwerty123"
-default[:redmine][:db][:hostname] = "10.253.134.51"
+set_unless['redmine']['app_server_name'] = "redmine.#{node['fqdn']}"
+set_unless['redmine']['db'] = {
+  'type' => "mysql",
+  'db_name' => "",
+  'db_host' => "",
+  'db_user' => "",
+  'db_pass' => ""
+}
