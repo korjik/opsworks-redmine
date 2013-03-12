@@ -3,8 +3,9 @@ maintainer_email  "cookbooks@opscode.com"
 license           "Apache 2.0"
 description       "Installs and configures all aspects of apache2 using Debian style symlinks with helper definitions"
 long_description  IO.read(File.join(File.dirname(__FILE__), 'README.rdoc'))
-version           "0.9.1"
+version           "0.9"
 recipe            "apache2", "Main Apache configuration"
+recipe            "apache2::service", "Install and control Apache system service"
 recipe            "apache2::mod_alias", "Apache module 'alias' with config file"
 recipe            "apache2::mod_auth_basic", "Apache module 'auth_basic'"
 recipe            "apache2::mod_auth_digest", "Apache module 'auth_digest'"
@@ -30,17 +31,15 @@ recipe            "apache2::mod_mime", "Apache module 'mime' with config file"
 recipe            "apache2::mod_negotiation", "Apache module 'negotiation' with config file"
 recipe            "apache2::mod_php5", "Apache module 'php5'"
 recipe            "apache2::mod_proxy", "Apache module 'proxy' with config file"
-recipe            "apache2::mod_proxy_ajp", "Apache module 'proxy_ajp'"
-recipe            "apache2::mod_proxy_balancer", "Apache module 'proxy_balancer'"
-recipe            "apache2::mod_proxy_connect", "Apache module 'proxy_connect'"
 recipe            "apache2::mod_proxy_http", "Apache module 'proxy_http'"
 recipe            "apache2::mod_python", "Apache module 'python'"
 recipe            "apache2::mod_rewrite", "Apache module 'rewrite'"
 recipe            "apache2::mod_setenvif", "Apache module 'setenvif' with config file"
 recipe            "apache2::mod_ssl", "Apache module 'ssl' with config file, adds port 443 to listen_ports"
 recipe            "apache2::mod_status", "Apache module 'status' with config file"
+recipe            "apache2::logrotate", "Apache Logrotate configuration"
 
-%w{redhat centos debian ubuntu}.each do |os|
+['centos','redhat','fedora','amazon','debian','ubuntu'].each do |os|
   supports os
 end
 
